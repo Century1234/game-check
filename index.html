@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Game Shop</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #070B28;
+            --card-bg: linear-gradient(180deg, rgba(12, 22, 58, 0.96) 0%, rgba(5, 10, 32, 0.98) 100%);
+            --text-color: #f8fbff;
+            --border-color: rgba(75, 214, 255, 0.14);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: sans-serif;
+            padding-bottom: 80px;
+        }
+
+        /* Top Navigation */
+        .navbar {
+            background-color: #010b3b;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .balance-badge {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        /* Search Box */
+        .search-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-container input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Grid Layout */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        @media (max-width: 575px) {
+            .game-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .game-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+        }
+
+        /* Game Cards */
+        .game-card {
+            display: block;
+            border-radius: 8px;
+            overflow: hidden;
+            text-decoration: none;
+            transition: transform 0.2s;
+            border: 1px solid rgba(75, 214, 255, 0.05);
+        }
+
+        .game-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(75, 214, 255, 0.4);
+        }
+
+        .game-thumb {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: linear-gradient(135deg, #1a244d 0%, #0c122b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .thumb-title {
+            color: #dbe8ff;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation -->
+    <nav class="navbar sticky-top px-3 py-2">
+        <a href="#" class="balance-badge">
+            <span id="coin">0</span> JPY
+        </a>
+        <button class="btn btn-outline-light btn-sm">=</button>
+    </nav>
+
+    <div class="container mt-4" style="max-width: 800px;">
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search games...">
+        </div>
+
+        <h5 class="mb-3" style="color: #47f28f;">★ Featured Games</h5>
+        <div class="game-grid" id="gamesGrid">
+            
+            <!-- Mobile Legends (MLBB) -->
+            <a href="product.html" class="game-card" data-name="mobile legends mlbb bang">
+                <div class="game-thumb"><span class="thumb-title">Mobile Legends</span></div>
+            </a>
+            
+            <!-- PUBG Mobile -->
+            <a href="product.html" class="game-card" data-name="pubg mobile playerunknowns">
+                <div class="game-thumb"><span class="thumb-title">PUBG Mobile</span></div>
+            </a>
+
+            <!-- Clash of Clans (CoC) -->
+            <a href="product.html" class="game-card" data-name="clash of clans coc">
+                <div class="game-thumb"><span class="thumb-title">Clash of Clans</span></div>
+            </a>
+
+            <!-- Clash Royale -->
+            <a href="product.html" class="game-card" data-name="clash royale">
+                <div class="game-thumb"><span class="thumb-title">Clash Royale</span></div>
+            </a>
+
+            <!-- Brawl Stars -->
+            <a href="product.html" class="game-card" data-name="brawl stars">
+                <div class="game-thumb"><span class="thumb-title">Brawl Stars</span></div>
+            </a>
+
+        </div>
+
+        <!-- Empty State (No results found) -->
+        <div id="emptyState" class="empty-state">
+            <h4>検索結果が見つかりません</h4>
+            <p class="mb-0">別のキーワードを試してください。</p>
+        </div>
+
+    </div>
+
+    <!-- Javascript for Search Filtering -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const items = document.querySelectorAll('.game-card');
+            const emptyState = document.getElementById('emptyState');
+            const sections = document.querySelectorAll('h5');
+
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                let visibleCount = 0;
+
+                items.forEach(item => {
+                    const name = item.getAttribute('data-name').toLowerCase();
+                    if (name.includes(query)) {
+                        item.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                if (visibleCount === 0) {
+                    emptyState.style.display = 'block';
+                    sections.forEach(sec => sec.style.display = 'none');
+                } else {
+                    emptyState.style.display = 'none';
+                    if(query === "") {
+                        sections.forEach(sec => sec.style.display = 'block');
+                    } else {
+                        sections.forEach(sec => sec.style.display = 'none');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+<!-- Mobile Legends (MLBB) -->
+        <a href="product.html?game=mlbb" class="game-card" data-name="mobile legends bang bang">
+            <div class="game-thumb"><span class="thumb-title">Mobile Legends</span></div>
+        </a>
+        
+        <!-- PUBG Mobile -->
+        <a href="product.html?game=pubg" class="game-card" data-name="pubg mobile playerunknowns">
+            <div class="game-thumb"><span class="thumb-title">PUBG Mobile</span></div>
+        </a>
+
+        <!-- Clash of Clans (CoC) -->
+        <a href="product.html?game=coc" class="game-card" data-name="clash of clans coc">
+            <div class="game-thumb"><span class="thumb-title">Clash of Clans</span></div>
+        </a>
+
+        <!-- Clash Royale -->
+        <a href="product.html?game=cr" class="game-card" data-name="clash royale">
+            <div class="game-thumb"><span class="thumb-title">Clash Royale</span></div>
+        </a>
+
+        <!-- Brawl Stars -->
+        <a href="product.html?game=bs" class="game-card" data-name="brawl stars">
+            <div class="game-thumb"><span class="thumb-title">Brawl Stars</span></div>
+        </a>
