@@ -360,10 +360,10 @@
             </div>
             <div class="row g-2">
                 <div class="col-7">
-                    <input type="text" id="playerIdInput" class="form-control" placeholder="Player ID" required>
+                    <input type="text" id="playerIdInput" class="form-control" inputmode="numeric" placeholder="Player ID" required>
                 </div>
                 <div class="col-5">
-                    <input type="text" id="serverIdInput" class="form-control" placeholder="Server ID" required>
+                    <input type="text" id="serverIdInput" class="form-control" inputmode="numeric" placeholder="Server ID" required>
                 </div>
             </div>
             <div id="fullwidthError" class="fullwidth-error-text d-none" role="alert"></div>
@@ -451,7 +451,7 @@
                 <div class="modal-body">
                     <p id="modalSummaryText" class="mb-2"></p>
                     <div id="modalPaypayNotice" class="paypay-info-box d-none">
-                        <strong id="modalPaypayTitle">PayPay Checkout (Demo)</strong>
+                        <strong id="modalPaypayTitle">PayPay Payment Flow (Demo)</strong>
                         <p id="modalPaypayDesc" class="mb-0 mt-1">
                             In production, this redirects to PayPay or opens the PayPay payment screen via your backend API.
                         </p>
@@ -540,7 +540,7 @@
                 paymentStepTitle: 'PLEASE SELECT PAYMENT METHOD',
                 playerIdPlaceholder: 'Player ID',
                 serverIdPlaceholder: 'Server ID',
-                fullwidthError: 'Full-width characters are not allowed. Please enter half-width characters only.',
+                fullwidthError: 'Only half-width numbers (0-9) are allowed. Letters, symbols, and full-width characters are not allowed.',
                 walletName: 'My Wallet',
                 paypayName: 'PayPay',
                 instantSub: 'Instant',
@@ -577,7 +577,7 @@
                 paymentStepTitle: '支払い方法を選択してください',
                 playerIdPlaceholder: 'プレイヤーID',
                 serverIdPlaceholder: 'サーバーID',
-                fullwidthError: '全角文字は入力できません。半角文字で入力してください。',
+                fullwidthError: '半角数字（0〜9）のみ入力できます。英字・記号・全角文字は入力できません。',
                 walletName: 'マイウォレット',
                 paypayName: 'PayPay',
                 instantSub: '即時',
@@ -614,7 +614,7 @@
                 paymentStepTitle: 'ငွေပေးချေမှု နည်းလမ်း ရွေးချယ်ပါ',
                 playerIdPlaceholder: 'ကစားသမား ID',
                 serverIdPlaceholder: 'ဆာဗာ ID',
-                fullwidthError: 'စာလုံးအကြီး/အပြည့် (Full-width) မရိုက်ထည့်ရပါ။ Half-width စာလုံးဖြင့် ထည့်သွင်းပါ။',
+                fullwidthError: 'Half-width ဂဏန်း (0-9) သာ ထည့်သွင်းနိုင်ပါသည်။ စာလုံး၊ သင်္ကေတနှင့် Full-width စာလုံးများ မရပါ။',
                 walletName: 'ကျွန်ုပ်၏ Wallet',
                 paypayName: 'PayPay',
                 instantSub: 'ချက်ချင်း',
@@ -641,8 +641,8 @@
             }
         };
 
-        function hasFullwidthChar(value) {
-            return /[^\x00-\x7F]/.test(value);
+        function hasInvalidIdChar(value) {
+            return !/^[0-9]*$/.test(value);
         }
 
         function normalizeLang(lang) {
@@ -750,10 +750,10 @@
                     }
                 }
 
-                function validateFullwidthInputs() {
+                function validateIdInputs() {
                     const t = I18N[activeLang];
-                    const playerInvalid = hasFullwidthChar(playerIdInput.value);
-                    const serverInvalid = hasFullwidthChar(serverIdInput.value);
+                    const playerInvalid = hasInvalidIdChar(playerIdInput.value);
+                    const serverInvalid = hasInvalidIdChar(serverIdInput.value);
 
                     playerIdInput.classList.toggle('is-fullwidth-error', playerInvalid);
                     serverIdInput.classList.toggle('is-fullwidth-error', serverInvalid);
@@ -770,10 +770,10 @@
                 }
 
                 function updateBuyButtonState() {
-                    const isValidFullwidth = validateFullwidthInputs();
+                    const isValidId = validateIdInputs();
                     const hasPlayerId = playerIdInput.value.trim().length > 0;
                     const hasServerId = serverIdInput.value.trim().length > 0;
-                    buyButton.disabled = !(selectedPackage && hasPlayerId && hasServerId && isValidFullwidth);
+                    buyButton.disabled = !(selectedPackage && hasPlayerId && hasServerId && isValidId);
                 }
 
                 function getSelectedPaymentLabel() {
@@ -911,7 +911,7 @@
                 });
 
                 function completeOrder() {
-                    if (!selectedPackage) return;
+                    if (!selectedPackage || !validateIdInputs()) return;
 
                     const t = I18N[activeLang];
                     const playerId = playerIdInput.value.trim();
@@ -949,7 +949,7 @@
                 }
 
                 buyButton.addEventListener('click', function () {
-                    if (!validateFullwidthInputs() || buyButton.disabled || !selectedPackage) return;
+                    if (!validateIdInputs() || buyButton.disabled || !selectedPackage) return;
 
                     const t = I18N[activeLang];
                     const playerId = playerIdInput.value.trim();
