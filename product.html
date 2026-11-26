@@ -247,48 +247,16 @@
             <div class="pack-grid" id="diamondGrid"></div>
         </div>
 
-        <!-- Step 3: Payment Method -->
+        <!-- Step 3: Payment Method (Dynamic by Currency: JPY / MMK) -->
         <div class="shop-card">
             <h6 class="fw-bold mb-3 d-flex align-items-center">
                 <span class="step-badge">3</span><span id="step3Title">Select Payment Method</span>
             </h6>
 
-            <div class="d-flex flex-column gap-2" id="paymentList">
-                <button type="button" class="payment-option active" data-method="card">
-                    <div>
-                        <div class="fw-bold" id="payCardTitle">Credit / Debit Card</div>
-                        <small class="text-muted-custom" id="payCardSub">Visa, Mastercard, JCB, Amex (Instant)</small>
-                    </div>
-                    <span class="badge bg-info text-dark">CARD</span>
-                </button>
-
-                <button type="button" class="payment-option" data-method="paypay">
-                    <div>
-                        <div class="fw-bold" id="payPaypayTitle">PayPay (QR / App Payment)</div>
-                        <small class="text-muted-custom" id="payPaypaySub">Pay via PayPay balance or linked card (Instant)</small>
-                    </div>
-                    <span class="badge bg-danger">PAYPAY</span>
-                </button>
-
-                <button type="button" class="payment-option" data-method="convenience">
-                    <div>
-                        <div class="fw-bold" id="payCvsTitle">Convenience Store (コンビニ決済)</div>
-                        <small class="text-muted-custom" id="payCvsSub">7-Eleven, Lawson, FamilyMart (Reflects after payment)</small>
-                    </div>
-                    <span class="badge bg-warning text-dark">CVS</span>
-                </button>
-
-                <button type="button" class="payment-option" data-method="wallet">
-                    <div>
-                        <div class="fw-bold" id="payWalletTitle">My Wallet (残高払い)</div>
-                        <small class="text-muted-custom"><span id="walletOptionPrefix">Balance:</span> <span id="walletOptionBalance">0</span> JPY</small>
-                    </div>
-                    <span class="badge bg-success text-dark">WALLET</span>
-                </button>
-            </div>
+            <div class="d-flex flex-column gap-2" id="paymentList"></div>
 
             <div id="paymentExtraFields" class="mt-3 p-3 rounded" style="background: rgba(255, 255, 255, 0.03); border: 1px dashed var(--border-color);">
-                <div id="cardFields">
+                <div id="cardFields" class="d-none">
                     <label for="cardMemoInput" class="form-label small text-muted-custom" id="cardNoteLabel">Card Note (Use payment SDK token in production)</label>
                     <input type="text" id="cardMemoInput" class="form-control form-control-sm" placeholder="Test mode: no real card charged">
                 </div>
@@ -298,6 +266,11 @@
                 <div id="convenienceFields" class="d-none">
                     <label for="customerEmailInput" class="form-label small text-muted-custom" id="cvsEmailLabel">Receipt / Payment Code Email *</label>
                     <input type="email" id="customerEmailInput" class="form-control form-control-sm" placeholder="player@example.com">
+                </div>
+                <div id="mmkPayFields" class="d-none">
+                    <label for="mmkPhoneInput" class="form-label small text-muted-custom" id="mmkPhoneLabel">Myanmar Mobile Number (KBZPay / CB Pay / AYA Pay / WavePay / UAB Pay) *</label>
+                    <input type="tel" id="mmkPhoneInput" class="form-control form-control-sm" placeholder="e.g. 09xxxxxxxxx">
+                    <small class="text-info d-block mt-1" id="mmkPayNoteText">Confirm the payment request inside your banking / mobile wallet app after proceeding.</small>
                 </div>
                 <div id="walletFields" class="d-none">
                     <small class="text-success d-block" id="walletNoteText">Deducts directly from your My Wallet JPY balance.</small>
@@ -313,7 +286,7 @@
             </div>
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="text-muted-custom small" id="summaryMethodLabel">Payment Method</span>
-                <strong id="summaryMethod">Credit / Debit Card</strong>
+                <strong id="summaryMethod">-</strong>
             </div>
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted-custom small" id="summaryTotalLabel">Total Amount</span>
@@ -350,9 +323,89 @@
             CHECK_ACCOUNT: '/api/mlbb/check-account'
         };
 
+        // JPY and MMK only (THB removed)
         const RATES_FROM_JPY = {
             JPY: 1,
-            MMK: 30.5
+            MMK: 28
+        };
+
+        const MMK_WALLET_METHODS = ['kbzpay', 'cbpay', 'ayapay', 'wavepay', 'uabpay'];
+
+        const PAYMENT_METHODS_BY_CURRENCY = {
+            JPY: [
+                {
+                    id: 'card',
+                    badge: 'CARD',
+                    badgeClass: 'bg-info text-dark',
+                    titleKey: 'payCardTitle',
+                    subKey: 'payCardSub'
+                },
+                {
+                    id: 'paypay',
+                    badge: 'PAYPAY',
+                    badgeClass: 'bg-danger',
+                    titleKey: 'payPaypayTitle',
+                    subKey: 'payPaypaySub'
+                },
+                {
+                    id: 'convenience',
+                    badge: 'CVS',
+                    badgeClass: 'bg-warning text-dark',
+                    titleKey: 'payCvsTitle',
+                    subKey: 'payCvsSub'
+                },
+                {
+                    id: 'wallet',
+                    badge: 'WALLET',
+                    badgeClass: 'bg-success text-dark',
+                    titleKey: 'payWalletTitle',
+                    subKey: null
+                }
+            ],
+            MMK: [
+                {
+                    id: 'kbzpay',
+                    badge: 'KBZPAY',
+                    badgeClass: 'bg-primary',
+                    titleKey: 'payKbzTitle',
+                    subKey: 'payKbzSub'
+                },
+                {
+                    id: 'cbpay',
+                    badge: 'CB PAY',
+                    badgeClass: 'bg-info text-dark',
+                    titleKey: 'payCbTitle',
+                    subKey: 'payCbSub'
+                },
+                {
+                    id: 'ayapay',
+                    badge: 'AYA PAY',
+                    badgeClass: 'bg-danger',
+                    titleKey: 'payAyaTitle',
+                    subKey: 'payAyaSub'
+                },
+                {
+                    id: 'wavepay',
+                    badge: 'WAVEPAY',
+                    badgeClass: 'bg-warning text-dark',
+                    titleKey: 'payWaveTitle',
+                    subKey: 'payWaveSub'
+                },
+                {
+                    id: 'uabpay',
+                    badge: 'UAB PAY',
+                    badgeClass: 'bg-secondary',
+                    titleKey: 'payUabTitle',
+                    subKey: 'payUabSub'
+                },
+                {
+                    id: 'wallet',
+                    badge: 'WALLET',
+                    badgeClass: 'bg-success text-dark',
+                    titleKey: 'payWalletTitle',
+                    subKey: null
+                }
+            ]
         };
 
         const I18N = {
@@ -381,11 +434,23 @@
                 payPaypaySub: 'Pay via PayPay balance or linked card (Instant)',
                 payCvsTitle: 'Convenience Store (コンビニ決済)',
                 payCvsSub: '7-Eleven, Lawson, FamilyMart (Reflects after payment)',
+                payKbzTitle: 'KBZPay (KBZ Mobile Banking)',
+                payKbzSub: 'Pay with KBZPay wallet / mobile banking',
+                payCbTitle: 'CB Pay (CB Bank Mobile)',
+                payCbSub: 'Pay with CB Pay wallet / mobile banking',
+                payAyaTitle: 'AYA Pay (AYA Bank Mobile)',
+                payAyaSub: 'Pay with AYA Pay wallet / mobile banking',
+                payWaveTitle: 'WavePay (Wave Money)',
+                payWaveSub: 'Pay with WavePay mobile wallet',
+                payUabTitle: 'UAB Pay (UAB Bank Mobile)',
+                payUabSub: 'Pay with UAB Pay wallet / mobile banking',
                 payWalletTitle: 'My Wallet (残高払い)',
                 walletOptionPrefix: 'Balance:',
                 cardNoteLabel: 'Card Note (Use payment SDK token in production)',
                 paypayNoteText: 'You will proceed to PayPay authorization after clicking Proceed to Payment.',
                 cvsEmailLabel: 'Receipt / Payment Code Email *',
+                mmkPhoneLabel: 'Myanmar Mobile Number (KBZPay / CB Pay / AYA Pay / WavePay / UAB Pay) *',
+                mmkPayNoteText: 'Confirm the payment request inside your banking / mobile wallet app after proceeding.',
                 walletNoteText: 'Deducts directly from your My Wallet JPY balance.',
                 summaryPackLabel: 'Selected Package',
                 summaryMethodLabel: 'Payment Method',
@@ -397,6 +462,11 @@
                     card: 'Credit / Debit Card',
                     paypay: 'PayPay (QR / App Payment)',
                     convenience: 'Convenience Store (コンビニ決済)',
+                    kbzpay: 'KBZPay',
+                    cbpay: 'CB Pay',
+                    ayapay: 'AYA Pay',
+                    wavepay: 'WavePay',
+                    uabpay: 'UAB Pay',
                     wallet: 'My Wallet (残高払い)'
                 }
             },
@@ -425,11 +495,23 @@
                 payPaypaySub: 'PayPay残高・連携カードで支払い（即時反映）',
                 payCvsTitle: 'コンビニ決済',
                 payCvsSub: 'セブンイレブン・ローソン・ファミマ（入金後に反映）',
+                payKbzTitle: 'KBZPay（ミャンマーバンキング）',
+                payKbzSub: 'KBZPay アプリ・バンキングで支払い',
+                payCbTitle: 'CB Pay（CB銀行モバイル）',
+                payCbSub: 'CB Pay アプリ・バンキングで支払い',
+                payAyaTitle: 'AYA Pay（AYA銀行モバイル）',
+                payAyaSub: 'AYA Pay アプリ・バンキングで支払い',
+                payWaveTitle: 'WavePay（Wave Money）',
+                payWaveSub: 'WavePay モバイルウォレットで支払い',
+                payUabTitle: 'UAB Pay（UAB銀行モバイル）',
+                payUabSub: 'UAB Pay アプリ・バンキングで支払い',
                 payWalletTitle: 'マイウォレット（残高払い）',
                 walletOptionPrefix: '残高:',
                 cardNoteLabel: 'カードメモ（本番では決済SDKのトークンを使用）',
                 paypayNoteText: '「決済へ進む」を押すと PayPay 認証フローへ進みます。',
                 cvsEmailLabel: '払込票・案内メール送信先 *',
+                mmkPhoneLabel: 'ミャンマー携帯番号（KBZPay / CB Pay / AYA Pay / WavePay / UAB Pay） *',
+                mmkPayNoteText: '手続き後、各バンキング／ウォレットアプリ内で支払いを確認してください。',
                 walletNoteText: 'ウォレットの JPY 残高から直接引き落とされます。',
                 summaryPackLabel: '選択中のパック',
                 summaryMethodLabel: '決済方法',
@@ -441,6 +523,11 @@
                     card: 'クレジットカード / デビットカード',
                     paypay: 'PayPay（QR / アプリ決済）',
                     convenience: 'コンビニ決済',
+                    kbzpay: 'KBZPay',
+                    cbpay: 'CB Pay',
+                    ayapay: 'AYA Pay',
+                    wavepay: 'WavePay',
+                    uabpay: 'UAB Pay',
                     wallet: 'マイウォレット（残高払い）'
                 }
             },
@@ -469,11 +556,23 @@
                 payPaypaySub: 'PayPay ဖြင့် ပေးချေရန် (ချက်ချင်း)',
                 payCvsTitle: 'Convenience Store (ကွန်ဗင်းနီယံစတိုး)',
                 payCvsSub: '7-Eleven, Lawson, FamilyMart (ငွေသွင်းပြီးမှ ဝင်မည်)',
+                payKbzTitle: 'KBZPay (KBZ ဘဏ်ဝန်ဆောင်မှု)',
+                payKbzSub: 'KBZPay ဖြင့် လွယ်ကူစွာ ပေးချေနိုင်ပါသည်',
+                payCbTitle: 'CB Pay (CB ဘဏ်ဝန်ဆောင်မှု)',
+                payCbSub: 'CB Pay ဖြင့် လွယ်ကူစွာ ပေးချေနိုင်ပါသည်',
+                payAyaTitle: 'AYA Pay (AYA ဘဏ်ဝန်ဆောင်မှု)',
+                payAyaSub: 'AYA Pay ဖြင့် လွယ်ကူစွာ ပေးချေနိုင်ပါသည်',
+                payWaveTitle: 'WavePay (Wave Money)',
+                payWaveSub: 'WavePay ဖြင့် လွယ်ကူစွာ ပေးချေနိုင်ပါသည်',
+                payUabTitle: 'UAB Pay (UAB ဘဏ်ဝန်ဆောင်မှု)',
+                payUabSub: 'UAB Pay ဖြင့် လွယ်ကူစွာ ပေးချေနိုင်ပါသည်',
                 payWalletTitle: 'My Wallet (ပိုက်ဆံအိတ်လက်ကျန်)',
                 walletOptionPrefix: 'လက်ကျန်:',
                 cardNoteLabel: 'ကတ်မှတ်စု (Production တွင် Payment SDK အသုံးပြုရန်)',
                 paypayNoteText: 'ဆက်လုပ်ရန် နှိပ်ပြီးနောက် PayPay အတည်ပြုချက်သို့ သွားပါမည်။',
                 cvsEmailLabel: 'ငွေသွင်းကုဒ် ပို့ရန် အီးမေးလ် *',
+                mmkPhoneLabel: 'ဖုန်းနံပါတ် (KBZPay / CB Pay / AYA Pay / WavePay / UAB Pay) *',
+                mmkPayNoteText: 'ဆက်လုပ်ပြီးနောက် သက်ဆိုင်ရာ Pay အက်ပ်ထဲတွင် ငွေပေးချေမှုကို အတည်ပြုပါ။',
                 walletNoteText: 'My Wallet ရှိ JPY လက်ကျန်မှ တိုက်ရိုက်နုတ်ယူပါမည်။',
                 summaryPackLabel: 'ရွေးချယ်ထားသော ပက်ကေ့ချ်',
                 summaryMethodLabel: 'ငွေပေးချေမှုနည်းလမ်း',
@@ -485,6 +584,11 @@
                     card: 'Credit / Debit Card',
                     paypay: 'PayPay (QR / App Payment)',
                     convenience: 'Convenience Store (ကွန်ဗင်းနီယံစတိုး)',
+                    kbzpay: 'KBZPay',
+                    cbpay: 'CB Pay',
+                    ayapay: 'AYA Pay',
+                    wavepay: 'WavePay',
+                    uabpay: 'UAB Pay',
                     wallet: 'My Wallet (ပိုက်ဆံအိတ်လက်ကျန်)'
                 }
             }
@@ -569,7 +673,10 @@
         function renderHeader() {
             const bal = getBalance().toLocaleString();
             document.getElementById('navBalance').textContent = bal;
-            document.getElementById('walletOptionBalance').textContent = bal;
+            const walletBalEl = document.getElementById('walletOptionBalance');
+            if (walletBalEl) {
+                walletBalEl.textContent = bal;
+            }
             try {
                 const acc = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACCOUNT) || 'null');
                 if (acc && acc.username) {
@@ -607,10 +714,52 @@
             });
         }
 
+        function renderPaymentList() {
+            const dict = t();
+            const methods = PAYMENT_METHODS_BY_CURRENCY[state.currency] || PAYMENT_METHODS_BY_CURRENCY.JPY;
+            if (!methods.some(m => m.id === state.paymentMethod)) {
+                state.paymentMethod = methods[0].id;
+            }
+
+            const listEl = document.getElementById('paymentList');
+            const bal = getBalance().toLocaleString();
+            listEl.innerHTML = '';
+
+            methods.forEach(m => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `payment-option ${m.id === state.paymentMethod ? 'active' : ''}`;
+                btn.setAttribute('data-method', m.id);
+
+                const subHtml = m.subKey
+                    ? `<small class="text-muted-custom">${dict[m.subKey]}</small>`
+                    : `<small class="text-muted-custom">${dict.walletOptionPrefix} <span id="walletOptionBalance">${bal}</span> JPY</small>`;
+
+                btn.innerHTML = `
+                    <div>
+                        <div class="fw-bold">${dict[m.titleKey]}</div>
+                        ${subHtml}
+                    </div>
+                    <span class="badge ${m.badgeClass}">${m.badge}</span>
+                `;
+
+                btn.addEventListener('click', () => {
+                    state.paymentMethod = m.id;
+                    renderPaymentList();
+                    renderPaymentFields();
+                    renderSummary();
+                });
+
+                listEl.appendChild(btn);
+            });
+        }
+
         function renderPaymentFields() {
+            const isMmkWallet = MMK_WALLET_METHODS.includes(state.paymentMethod);
             document.getElementById('cardFields').classList.toggle('d-none', state.paymentMethod !== 'card');
             document.getElementById('paypayFields').classList.toggle('d-none', state.paymentMethod !== 'paypay');
             document.getElementById('convenienceFields').classList.toggle('d-none', state.paymentMethod !== 'convenience');
+            document.getElementById('mmkPayFields').classList.toggle('d-none', !isMmkWallet);
             document.getElementById('walletFields').classList.toggle('d-none', state.paymentMethod !== 'wallet');
         }
 
@@ -673,18 +822,11 @@
             document.getElementById('diamondGroupLabel').textContent = dict.diamondGroupLabel;
             document.getElementById('step3Title').textContent = dict.step3Title;
 
-            document.getElementById('payCardTitle').textContent = dict.payCardTitle;
-            document.getElementById('payCardSub').textContent = dict.payCardSub;
-            document.getElementById('payPaypayTitle').textContent = dict.payPaypayTitle;
-            document.getElementById('payPaypaySub').textContent = dict.payPaypaySub;
-            document.getElementById('payCvsTitle').textContent = dict.payCvsTitle;
-            document.getElementById('payCvsSub').textContent = dict.payCvsSub;
-            document.getElementById('payWalletTitle').textContent = dict.payWalletTitle;
-            document.getElementById('walletOptionPrefix').textContent = dict.walletOptionPrefix;
-
             document.getElementById('cardNoteLabel').textContent = dict.cardNoteLabel;
             document.getElementById('paypayNoteText').textContent = dict.paypayNoteText;
             document.getElementById('cvsEmailLabel').textContent = dict.cvsEmailLabel;
+            document.getElementById('mmkPhoneLabel').textContent = dict.mmkPhoneLabel;
+            document.getElementById('mmkPayNoteText').textContent = dict.mmkPayNoteText;
             document.getElementById('walletNoteText').textContent = dict.walletNoteText;
 
             document.getElementById('summaryPackLabel').textContent = dict.summaryPackLabel;
@@ -693,6 +835,8 @@
             document.getElementById('proceedBtn').textContent = dict.proceedBtn;
             document.getElementById('recentOrdersHeading').textContent = dict.recentOrdersHeading;
 
+            renderPaymentList();
+            renderPaymentFields();
             renderSummary();
             renderOrders();
         }
@@ -752,6 +896,8 @@
                     b.classList.toggle('btn-outline-light', !active);
                 });
                 renderPackages();
+                renderPaymentList();
+                renderPaymentFields();
                 renderSummary();
             });
         });
@@ -803,17 +949,6 @@
             }
         });
 
-        document.querySelectorAll('.payment-option').forEach(btn => {
-            btn.addEventListener('click', () => {
-                state.paymentMethod = btn.getAttribute('data-method');
-                document.querySelectorAll('.payment-option').forEach(b => {
-                    b.classList.toggle('active', b === btn);
-                });
-                renderPaymentFields();
-                renderSummary();
-            });
-        });
-
         document.getElementById('proceedBtn').addEventListener('click', () => {
             const userId = document.getElementById('userIdInput').value.trim();
             const serverId = document.getElementById('serverIdInput').value.trim();
@@ -834,6 +969,14 @@
                 }
             }
 
+            if (MMK_WALLET_METHODS.includes(state.paymentMethod)) {
+                const phone = document.getElementById('mmkPhoneInput').value.trim();
+                if (!phone) {
+                    statusBox.innerHTML = `<div class="alert alert-warning py-2 mb-0">Please enter a mobile number for ${dict.methods[state.paymentMethod]}.</div>`;
+                    return;
+                }
+            }
+
             if (state.paymentMethod === 'wallet') {
                 const currentBal = getBalance();
                 if (currentBal < pack.jpy) {
@@ -844,8 +987,9 @@
             }
 
             const orderId = 'ORD-' + Date.now().toString().slice(-6);
-            const statusText = state.paymentMethod === 'convenience'
-                ? 'Pending Payment (コンビニ払込待ち)'
+            const isPendingExternal = ['convenience', ...MMK_WALLET_METHODS].includes(state.paymentMethod);
+            const statusText = isPendingExternal
+                ? 'Pending Payment (支払い確認待ち)'
                 : 'Completed (Demo Order Created)';
 
             const orderRecord = {
@@ -882,7 +1026,6 @@
 
         renderHeader();
         renderPackages();
-        renderPaymentFields();
         applyLanguage(state.lang);
     </script>
 </body>
