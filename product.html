@@ -1,78 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Top Up - My Game Shop</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Mobile Legends | My Game Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
             --bg-color: #070B28;
             --card-bg: linear-gradient(180deg, rgba(12, 22, 58, 0.96) 0%, rgba(5, 10, 32, 0.98) 100%);
             --text-color: #f8fbff;
-            --border-color: rgba(75, 214, 255, 0.14);
+            --muted-color: rgba(248, 251, 255, 0.65);
+            --border-color: rgba(75, 214, 255, 0.16);
             --accent-color: #47f28f;
-            --smile-color: #ffd43b;
-            --paypay-color: #ff0033;
-            --active-bg: rgba(71, 242, 143, 0.15);
-            --active-border: #47f28f;
+            --active-bg: rgba(71, 242, 143, 0.14);
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: sans-serif;
-            padding-bottom: 100px;
-        }
-
-        .lang-fullscreen-overlay {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at top, #13235c 0%, #050920 75%);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-
-        .lang-fullscreen-overlay.d-none {
-            display: none !important;
-        }
-
-        .lang-selector-box {
-            width: 100%;
-            max-width: 440px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 28px 24px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-        }
-
-        .lang-choice-btn {
-            width: 100%;
-            padding: 14px 18px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-color);
-            font-size: 1.05rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .lang-choice-btn:hover,
-        .lang-choice-btn.active {
-            border-color: var(--accent-color);
-            background: var(--active-bg);
-            color: var(--accent-color);
+            padding-bottom: 80px;
         }
 
         .navbar {
@@ -80,570 +28,480 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .back-btn {
-            color: white;
+        .balance-badge {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
             text-decoration: none;
-            font-size: 1.2rem;
-            margin-right: 12px;
         }
 
-        .step-card {
+        .shop-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 18px;
             margin-bottom: 16px;
         }
 
-        .step-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
         .step-badge {
-            background-color: var(--accent-color);
-            color: #050a20;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 0.85rem;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: #051028;
+            font-weight: bold;
+            font-size: 0.88rem;
+            margin-right: 8px;
             flex-shrink: 0;
         }
 
-        .step-title {
-            font-size: 0.95rem;
-            font-weight: 800;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            margin: 0;
-        }
-
-        .notice-banner {
-            background: rgba(255, 212, 59, 0.08);
-            border-left: 3px solid var(--smile-color);
-            border-radius: 6px;
-            padding: 10px 12px;
-            font-size: 0.82rem;
-            color: #ffe8a1;
-            margin-bottom: 14px;
-        }
-
-        .paypay-info-box {
-            background: rgba(255, 0, 51, 0.09);
-            border: 1px solid rgba(255, 0, 51, 0.45);
-            border-radius: 8px;
-            padding: 12px 14px;
-            margin-top: 12px;
-            font-size: 0.85rem;
-            color: #ffd6de;
-        }
-
-        .package-grid {
+        .pack-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
 
         @media (min-width: 768px) {
-            .package-grid {
+            .pack-grid {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 12px;
             }
         }
 
-        .package-card {
+        .pack-btn {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 14px 10px;
-            text-align: center;
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-color);
             cursor: pointer;
-            transition: all 0.2s;
-            background-color: rgba(255, 255, 255, 0.02);
+            transition: all 0.15s ease;
         }
 
-        .package-card:hover {
-            border-color: rgba(75, 214, 255, 0.45);
+        .pack-btn:hover {
+            border-color: rgba(71, 242, 143, 0.55);
         }
 
-        .package-card.selected {
-            background-color: var(--active-bg);
-            border-color: var(--active-border);
+        .pack-btn.active {
+            background: var(--active-bg);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 1px var(--accent-color);
         }
 
-        .package-amount {
-            font-size: 1rem;
+        .pack-tag {
+            font-size: 0.7rem;
             font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(75, 214, 255, 0.18);
+            color: #9be7ff;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .payment-option:hover {
+            border-color: rgba(71, 242, 143, 0.5);
+        }
+
+        .payment-option.active {
+            background: var(--active-bg);
+            border-color: var(--accent-color);
+        }
+
+        .form-control,
+        .form-select {
+            background-color: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
             color: #fff;
         }
 
-        .package-price {
-            font-size: 0.88rem;
-            color: var(--accent-color);
-            margin-top: 4px;
-            font-weight: 600;
-        }
-
-        .payment-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        .payment-card {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px 10px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.02);
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .payment-card:hover {
-            border-color: rgba(75, 214, 255, 0.45);
-        }
-
-        .payment-card.selected {
-            background-color: var(--active-bg);
-            border-color: var(--active-border);
-        }
-
-        .payment-name {
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .payment-sub {
-            font-size: 0.78rem;
-            color: #b8c7e8;
-            margin-top: 3px;
-        }
-
-        .form-control {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: white;
-        }
-
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .form-control:focus {
+        .form-control:focus,
+        .form-select:focus {
             background-color: rgba(255, 255, 255, 0.1);
             border-color: var(--accent-color);
-            color: white;
+            color: #fff;
             box-shadow: none;
         }
 
-        .form-control.is-fullwidth-error {
-            border-color: #ff6b6b;
-            background-color: rgba(255, 107, 107, 0.12);
+        .form-select option {
+            background-color: #0c163a;
+            color: #fff;
         }
 
-        .fullwidth-error-text {
-            color: #ff8787;
-            font-size: 0.82rem;
-            margin-top: 8px;
-            font-weight: 600;
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.45);
         }
 
-        .info-toggle-btn {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 0.92rem;
-            padding: 0;
-        }
-
-        .modal-content {
-            background: #0c163a;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-        }
-
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #010b3b;
-            border-top: 1px solid var(--border-color);
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .total-price {
-            font-size: 1.15rem;
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-
-        .btn-buy {
+        .btn-accent {
             background-color: var(--accent-color);
-            color: #050a20;
+            color: #051028;
             font-weight: bold;
-            padding: 10px 28px;
-            border-radius: 25px;
             border: none;
-            cursor: pointer;
         }
 
-        .btn-buy:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
+        .btn-accent:hover {
+            background-color: #36dc7c;
+            color: #051028;
+        }
+
+        .text-muted-custom {
+            color: var(--muted-color);
+        }
+
+        .order-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- Fullscreen Language Selection Overlay -->
-    <div id="langOverlay" class="lang-fullscreen-overlay d-none" role="dialog" aria-modal="true" aria-labelledby="langOverlayTitle">
-        <div class="lang-selector-box">
-            <h4 id="langOverlayTitle" class="mb-2 fw-bold">Select Language</h4>
-            <p id="langOverlaySub" class="text-secondary small mb-4">Choose your preferred language</p>
-
-            <div class="d-flex flex-column gap-3">
-                <button type="button" class="lang-choice-btn" data-lang="en">
-                    <span>🇺🇸 English</span>
-                    <span>EN</span>
-                </button>
-                <button type="button" class="lang-choice-btn" data-lang="ja">
-                    <span>🇯🇵 日本語</span>
-                    <span>JA</span>
-                </button>
-                <button type="button" class="lang-choice-btn" data-lang="my">
-                    <span>🇲🇲 မြန်မာဘာသာ</span>
-                    <span>MY</span>
-                </button>
-            </div>
+    <nav class="navbar sticky-top px-3 py-2">
+        <div class="d-flex align-items-center gap-2">
+            <a href="./index.html" class="btn btn-sm btn-outline-light" id="backShopLink">&larr; Shop</a>
+            <a href="./index.html" class="balance-badge">
+                <span id="navWalletPrefix">Wallet:</span> <span id="navBalance">0</span> JPY
+            </a>
         </div>
-    </div>
-
-    <!-- Top Navigation -->
-    <nav class="navbar sticky-top px-3 py-3">
-        <div class="d-flex align-items-center justify-content-between w-100">
-            <div class="d-flex align-items-center">
-                <a href="index.html" class="back-btn">←</a>
-                <h5 class="mb-0 text-white" id="headerTitle">Game Top Up</h5>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <small id="accountBadge" class="text-info"></small>
-                <button type="button" id="openLangOverlayBtn" class="btn btn-outline-light btn-sm">
-                    🌐 <span id="currentLangCode">EN</span>
-                </button>
-            </div>
+        <div class="d-flex align-items-center gap-2">
+            <small id="navAccount" class="text-info d-none d-sm-inline">Guest</small>
+            <select id="langSelect" class="form-select form-select-sm" style="width: auto;" aria-label="Language">
+                <option value="en">🌐 EN</option>
+                <option value="ja">🌐 JA</option>
+                <option value="my">🌐 MY</option>
+            </select>
         </div>
     </nav>
 
-    <div class="container mt-3" style="max-width: 800px;">
+    <div class="container mt-3" style="max-width: 820px;">
 
-        <!-- Step 1: Player Info (First) -->
-        <div class="step-card">
-            <div class="step-header">
-                <span class="step-badge">1</span>
-                <h6 class="step-title" id="playerInfoTitle">INSERT YOUR ACCOUNT & PLAYER INFO</h6>
+        <!-- Game Header + Currency Switch (JPY / MMK only; THB removed) -->
+        <div class="shop-card d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <span class="badge bg-success text-dark fw-bold mb-1" id="instantBadge">INSTANT DELIVERY</span>
+                <h4 id="gameTitle" class="fw-bold mb-1">Mobile Legends</h4>
+                <small class="text-muted-custom" id="heroSubtitle">Enter your account ID, choose a package, and select payment.</small>
             </div>
+            <div class="btn-group" role="group" aria-label="Currency">
+                <button type="button" class="btn btn-sm btn-success text-dark fw-bold currency-btn active" data-currency="JPY">JPY</button>
+                <button type="button" class="btn btn-sm btn-outline-light currency-btn" data-currency="MMK">MMK</button>
+            </div>
+        </div>
+
+        <!-- Step 1: Account ID -->
+        <div class="shop-card">
+            <h6 class="fw-bold mb-3 d-flex align-items-center">
+                <span class="step-badge">1</span><span id="step1Title">Account ID Verification</span>
+            </h6>
             <div class="row g-2">
-                <div class="col-7">
-                    <input type="text" id="playerIdInput" class="form-control" inputmode="numeric" placeholder="Player ID" required>
+                <div class="col-12 col-sm-6">
+                    <label for="userIdInput" class="form-label small text-muted-custom" id="userIdLabel">User ID *</label>
+                    <input type="text" id="userIdInput" class="form-control" inputmode="numeric" placeholder="e.g. 123456789">
                 </div>
-                <div class="col-5">
-                    <input type="text" id="serverIdInput" class="form-control" inputmode="numeric" placeholder="Server ID" required>
+                <div class="col-12 col-sm-6">
+                    <label for="serverIdInput" class="form-label small text-muted-custom" id="serverIdLabel">Server / Zone ID *</label>
+                    <input type="text" id="serverIdInput" class="form-control" inputmode="numeric" placeholder="e.g. 1234">
                 </div>
             </div>
-            <div id="fullwidthError" class="fullwidth-error-text d-none" role="alert"></div>
+            <div class="d-flex align-items-center gap-2 mt-3 flex-wrap">
+                <button type="button" id="checkAccountBtn" class="btn btn-sm btn-outline-info">Check Account</button>
+                <span id="accountVerifyStatus" class="small text-muted-custom">Not verified yet</span>
+            </div>
         </div>
 
         <!-- Step 2: Select Package -->
-        <div class="step-card">
-            <div class="step-header">
-                <span class="step-badge">2</span>
-                <h6 class="step-title" id="packageStepTitle">PLEASE SELECT PACKAGE</h6>
-            </div>
-            <div class="notice-banner" id="packageNotice">
-                Please verify your Player ID, Server ID, and balance before confirming your order.
-            </div>
-            <div class="package-grid" id="packageGrid">
-                <div class="package-card" data-price="150" data-base-amount="86">
-                    <div class="package-amount">86 Credits</div>
-                    <div class="package-price">¥ 150</div>
-                </div>
-                <div class="package-card" data-price="300" data-base-amount="172">
-                    <div class="package-amount">172 Credits</div>
-                    <div class="package-price">¥ 300</div>
-                </div>
-                <div class="package-card" data-price="1500" data-base-amount="875">
-                    <div class="package-amount">875 Credits</div>
-                    <div class="package-price">¥ 1,500</div>
-                </div>
-                <div class="package-card" data-price="3000" data-base-amount="2010">
-                    <div class="package-amount">2,010 Credits</div>
-                    <div class="package-price">¥ 3,000</div>
-                </div>
-            </div>
+        <div class="shop-card">
+            <h6 class="fw-bold mb-3 d-flex align-items-center">
+                <span class="step-badge">2</span><span id="step2Title">Select Package</span>
+            </h6>
+
+            <p class="small fw-bold text-info mb-2" id="passGroupLabel">Pass Bundles</p>
+            <div class="pack-grid mb-3" id="passGrid"></div>
+
+            <p class="small fw-bold text-info mb-2" id="diamondGroupLabel">Diamonds &amp; Double Diamonds</p>
+            <div class="pack-grid" id="diamondGrid"></div>
         </div>
 
-        <!-- Step 3: Select Payment Method -->
-        <div class="step-card">
-            <div class="step-header">
-                <span class="step-badge">3</span>
-                <h6 class="step-title" id="paymentStepTitle">PLEASE SELECT PAYMENT METHOD</h6>
-            </div>
-            <div class="payment-grid" id="paymentGrid">
-                <div class="payment-card selected" data-method="wallet">
-                    <div class="payment-name" id="payWalletName">My Wallet</div>
-                    <div class="payment-sub" id="payWalletSub">¥ 0</div>
-                </div>
-                <div class="payment-card" data-method="paypay">
-                    <div class="payment-name" id="payPaypayName">PayPay</div>
-                    <div class="payment-sub" id="payInstantSub">Instant</div>
-                </div>
-            </div>
-            <div id="paypayInfoBox" class="paypay-info-box d-none">
-                <strong id="paypayBoxTitle">PayPay Checkout (Demo)</strong>
-                <p id="paypayBoxDesc" class="mb-0 mt-1">
-                    Click Buy Now to review your order and simulate a PayPay payment confirmation.
-                </p>
-            </div>
-        </div>
+        <!-- Step 3: Payment Method -->
+        <div class="shop-card">
+            <h6 class="fw-bold mb-3 d-flex align-items-center">
+                <span class="step-badge">3</span><span id="step3Title">Select Payment Method</span>
+            </h6>
 
-        <!-- Product Information Accordion -->
-        <div class="step-card">
-            <button type="button" class="info-toggle-btn" data-bs-toggle="collapse" data-bs-target="#productInfoCollapse" aria-expanded="true" aria-controls="productInfoCollapse">
-                <span id="productInfoTitle">PRODUCT INFORMATION</span>
-                <span>▾</span>
-            </button>
-            <div class="collapse show mt-3" id="productInfoCollapse">
-                <ul class="small text-secondary mb-0 ps-3" id="productInfoList">
-                    <li>Double-check your Player ID and Server ID before placing an order.</li>
-                    <li>Wallet balances are stored locally in your browser.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="statusMessage" class="alert alert-success d-none" role="alert"></div>
-
-    </div>
-
-    <!-- PayPay / Checkout Confirmation Modal -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title" id="checkoutModalLabel">Confirm Payment</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="modalSummaryText" class="mb-2"></p>
-                    <div id="modalPaypayNotice" class="paypay-info-box d-none">
-                        <strong id="modalPaypayTitle">PayPay Payment Flow (Demo)</strong>
-                        <p id="modalPaypayDesc" class="mb-0 mt-1">
-                            In production, this redirects to PayPay or opens the PayPay payment screen via your backend API.
-                        </p>
+            <div class="d-flex flex-column gap-2" id="paymentList">
+                <button type="button" class="payment-option active" data-method="card">
+                    <div>
+                        <div class="fw-bold" id="payCardTitle">Credit / Debit Card</div>
+                        <small class="text-muted-custom" id="payCardSub">Visa, Mastercard, JCB, Amex (Instant)</small>
                     </div>
+                    <span class="badge bg-info text-dark">CARD</span>
+                </button>
+
+                <button type="button" class="payment-option" data-method="paypay">
+                    <div>
+                        <div class="fw-bold" id="payPaypayTitle">PayPay (QR / App Payment)</div>
+                        <small class="text-muted-custom" id="payPaypaySub">Pay via PayPay balance or linked card (Instant)</small>
+                    </div>
+                    <span class="badge bg-danger">PAYPAY</span>
+                </button>
+
+                <button type="button" class="payment-option" data-method="convenience">
+                    <div>
+                        <div class="fw-bold" id="payCvsTitle">Convenience Store (コンビニ決済)</div>
+                        <small class="text-muted-custom" id="payCvsSub">7-Eleven, Lawson, FamilyMart (Reflects after payment)</small>
+                    </div>
+                    <span class="badge bg-warning text-dark">CVS</span>
+                </button>
+
+                <button type="button" class="payment-option" data-method="wallet">
+                    <div>
+                        <div class="fw-bold" id="payWalletTitle">My Wallet (残高払い)</div>
+                        <small class="text-muted-custom"><span id="walletOptionPrefix">Balance:</span> <span id="walletOptionBalance">0</span> JPY</small>
+                    </div>
+                    <span class="badge bg-success text-dark">WALLET</span>
+                </button>
+            </div>
+
+            <div id="paymentExtraFields" class="mt-3 p-3 rounded" style="background: rgba(255, 255, 255, 0.03); border: 1px dashed var(--border-color);">
+                <div id="cardFields">
+                    <label for="cardMemoInput" class="form-label small text-muted-custom" id="cardNoteLabel">Card Note (Use payment SDK token in production)</label>
+                    <input type="text" id="cardMemoInput" class="form-control form-control-sm" placeholder="Test mode: no real card charged">
                 </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal" id="modalCancelBtn">Cancel</button>
-                    <button type="button" class="btn btn-success fw-bold text-dark" id="modalConfirmBtn">Confirm & Pay</button>
+                <div id="paypayFields" class="d-none">
+                    <small class="text-info d-block" id="paypayNoteText">You will proceed to PayPay authorization after clicking Proceed to Payment.</small>
+                </div>
+                <div id="convenienceFields" class="d-none">
+                    <label for="customerEmailInput" class="form-label small text-muted-custom" id="cvsEmailLabel">Receipt / Payment Code Email *</label>
+                    <input type="email" id="customerEmailInput" class="form-control form-control-sm" placeholder="player@example.com">
+                </div>
+                <div id="walletFields" class="d-none">
+                    <small class="text-success d-block" id="walletNoteText">Deducts directly from your My Wallet JPY balance.</small>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Bottom Checkout Bar -->
-    <div class="bottom-bar">
-        <div>
-            <div id="totalLabel" style="font-size: 0.78rem; color: #ccc;">Total</div>
-            <div class="total-price" id="displayTotal">¥ 0</div>
+        <!-- Summary & Proceed -->
+        <div class="shop-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted-custom small" id="summaryPackLabel">Selected Package</span>
+                <strong id="summaryPack">-</strong>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted-custom small" id="summaryMethodLabel">Payment Method</span>
+                <strong id="summaryMethod">Credit / Debit Card</strong>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted-custom small" id="summaryTotalLabel">Total Amount</span>
+                <strong id="summaryPrice" class="fs-5 text-success">¥240</strong>
+            </div>
+
+            <button type="button" id="proceedBtn" class="btn btn-accent w-100 py-2">
+                Proceed to Payment
+            </button>
+            <div id="orderStatusBox" class="mt-3 small"></div>
         </div>
-        <button type="button" class="btn-buy" id="buyButton" disabled>Buy Now</button>
-    </div>
 
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Recent Orders -->
+        <div class="shop-card">
+            <h6 class="fw-bold mb-3" id="recentOrdersHeading">Recent Orders</h6>
+            <div id="ordersList" class="d-flex flex-column gap-2">
+                <small class="text-muted-custom" id="noOrdersText">No orders yet.</small>
+            </div>
+        </div>
+
+    </div>
 
     <script>
         const STORAGE_KEYS = {
             ACCOUNT: 'gameShopAccount',
             BALANCE: 'gameShopWalletBalance',
+            ORDERS: 'gameShopOrders',
             LANG: 'gameShopLang'
         };
 
         const SUPPORTED_LANGS = ['en', 'ja', 'my'];
 
-        // ゲームごとの課金通貨名（ダイヤモンド固定ではなくタイトル別に設定）
-        const GAME_CURRENCY_CONFIG = {
-            'mlbb': { name: 'Mobile Legends', currency: 'Diamonds' },
-            'pubg': { name: 'PUBG Mobile', currency: 'UC' },
-            'magic-chess-go-go': { name: 'Magic Chess: Go Go', currency: 'Diamonds' },
-            'ragnarok-m-classic': { name: 'Ragnarok M Classic', currency: 'Big Cat Coins' },
-            'love-and-deepspace': { name: 'Love and Deepspace', currency: 'Crystals' },
-            'honor-of-kings': { name: 'Honor of Kings', currency: 'Tokens' },
-            'watcher-of-realms': { name: 'Watcher of Realms', currency: 'W-Gold' },
-            'dark-age-of-war-of-gods': { name: 'Dark Age: War of Gods', currency: 'Astral Ingots' },
-            'land-of-empires': { name: 'Land of Empires', currency: 'Gold Coins' },
-            'mobile-legends-adventure': { name: 'Mobile Legends: Adventure', currency: 'Diamonds' },
-            'lords-mobile': { name: 'Lords Mobile: Kingdom Wars', currency: 'Gems' },
-            'doomsday-last-survivors': { name: 'Doomsday: Last Survivors', currency: 'Gems' },
-            'viking-rise': { name: 'Viking Rise', currency: 'Gems' },
-            'blood-strike': { name: 'Blood Strike', currency: 'Golds' },
-            'walking-dead-survivors': { name: 'The Walking Dead: Survivors', currency: 'Gold Bars' },
-            'love-nikki': { name: 'Love Nikki - Dress Up Queen', currency: 'Diamonds' },
-            'echocalypse': { name: 'Echocalypse: Scarlet Covenant', currency: 'Iridescentite' },
-            'super-sus': { name: 'Super Sus', currency: 'Goldstars' },
-            'tomb-busters': { name: 'Tomb Busters', currency: 'Jade Coins' },
-            'wartune-ultra': { name: 'Wartune Ultra', currency: 'Balens' },
-            'conquer': { name: 'Conquer', currency: 'CPs' },
-            'heroes-evolved': { name: 'Heroes Evolved', currency: 'Tokens' },
-            'sausage-man': { name: 'Sausage Man', currency: 'Candies' },
-            'origin-of-elf-battle': { name: 'Origin of Elf Battle', currency: 'Spirit Stones' }
+        const API_ENDPOINTS = {
+            CHECK_ACCOUNT: '/api/mlbb/check-account'
         };
 
-        function resolveCurrencyByTitle(title, fallbackCurrency) {
-            const lower = (title || '').toLowerCase();
-            if (lower.includes('pubg')) return 'UC';
-            if (lower.includes('honor of kings')) return 'Tokens';
-            if (lower.includes('love and deepspace')) return 'Crystals';
-            if (lower.includes('blood strike')) return 'Golds';
-            if (lower.includes('super sus')) return 'Goldstars';
-            if (lower.includes('ragnarok')) return 'Big Cat Coins';
-            if (lower.includes('lords mobile') || lower.includes('doomsday') || lower.includes('viking rise')) return 'Gems';
-            if (lower.includes('sausage man')) return 'Candies';
-            return fallbackCurrency || 'Credits';
-        }
+        const RATES_FROM_JPY = {
+            JPY: 1,
+            MMK: 30.5
+        };
 
         const I18N = {
             en: {
-                htmlLang: 'en',
-                code: 'EN',
-                overlayTitle: 'Select Language',
-                overlaySub: 'Choose your preferred language',
-                topUpSuffix: 'Top Up',
-                playerInfoTitle: 'INSERT YOUR ACCOUNT & PLAYER INFO',
-                packageStepTitle: 'PLEASE SELECT PACKAGE',
-                packageNotice: 'Please verify your Player ID, Server ID, and balance before confirming your order.',
-                paymentStepTitle: 'PLEASE SELECT PAYMENT METHOD',
-                playerIdPlaceholder: 'Player ID',
-                serverIdPlaceholder: 'Server ID',
-                fullwidthError: 'Only half-width numbers (0-9) are allowed. Letters, symbols, and full-width characters are not allowed.',
-                walletName: 'My Wallet',
-                paypayName: 'PayPay',
-                instantSub: 'Instant',
-                paypayBoxTitle: 'PayPay Checkout (Demo)',
-                paypayBoxDesc: 'Click Buy Now to review your order and simulate a PayPay payment confirmation.',
-                modalTitle: 'Confirm Payment',
-                modalPaypayTitle: 'PayPay Payment Flow (Demo)',
-                modalPaypayDesc: 'For live PayPay payments, connect a backend server with a merchant PayPay API integration.',
-                modalCancel: 'Cancel',
-                modalConfirm: 'Confirm & Pay',
-                infoTitle: 'PRODUCT INFORMATION',
-                infoItems: [
-                    'Double-check your Player ID and Server ID before placing an order.',
-                    'Wallet balances are stored locally in your browser.'
-                ],
-                totalLabel: 'Total',
-                buyNow: 'Buy Now',
-                insufficientWallet: (balance, price) =>
-                    `Insufficient Wallet balance (Current: ¥${balance.toLocaleString()} / Required: ¥${price.toLocaleString()}).`,
-                modalSummary: (gameName, itemLabel, playerId, serverId, paymentMethod, price) =>
-                    `${gameName} (${itemLabel}) | ID: ${playerId} (${serverId}) | Method: ${paymentMethod} | Total: ¥${price.toLocaleString()}`,
-                orderSuccess: (gameName, itemLabel, playerId, serverId, paymentMethod, price, orderId) =>
-                    `Order placed [${orderId}]: ${gameName} (${itemLabel}) / ID: ${playerId} (${serverId}) / Payment: ${paymentMethod} / Total: ¥${price.toLocaleString()}`
+                backShop: '← Shop',
+                walletPrefix: 'Wallet:',
+                instantBadge: 'INSTANT DELIVERY',
+                heroSubtitle: 'Enter your account ID, choose a package, and select payment.',
+                step1Title: 'Account ID Verification',
+                userIdLabel: 'User ID *',
+                serverIdLabel: 'Server / Zone ID *',
+                checkAccountBtn: 'Check Account',
+                notVerified: 'Not verified yet',
+                checkingAccount: 'Checking account...',
+                enterBothIds: 'Please enter both User ID and Server / Zone ID.',
+                idChanged: 'ID changed. Click Check Account again.',
+                serverChanged: 'Server ID changed. Click Check Account again.',
+                userFound: (name, uid, sid) => `✓ User Found: ${name} (${uid} / ${sid})`,
+                step2Title: 'Select Package',
+                passGroupLabel: 'Pass Bundles',
+                diamondGroupLabel: 'Diamonds & Double Diamonds',
+                step3Title: 'Select Payment Method',
+                payCardTitle: 'Credit / Debit Card',
+                payCardSub: 'Visa, Mastercard, JCB, Amex (Instant)',
+                payPaypayTitle: 'PayPay (QR / App Payment)',
+                payPaypaySub: 'Pay via PayPay balance or linked card (Instant)',
+                payCvsTitle: 'Convenience Store (コンビニ決済)',
+                payCvsSub: '7-Eleven, Lawson, FamilyMart (Reflects after payment)',
+                payWalletTitle: 'My Wallet (残高払い)',
+                walletOptionPrefix: 'Balance:',
+                cardNoteLabel: 'Card Note (Use payment SDK token in production)',
+                paypayNoteText: 'You will proceed to PayPay authorization after clicking Proceed to Payment.',
+                cvsEmailLabel: 'Receipt / Payment Code Email *',
+                walletNoteText: 'Deducts directly from your My Wallet JPY balance.',
+                summaryPackLabel: 'Selected Package',
+                summaryMethodLabel: 'Payment Method',
+                summaryTotalLabel: 'Total Amount',
+                proceedBtn: 'Proceed to Payment',
+                recentOrdersHeading: 'Recent Orders',
+                noOrdersText: 'No orders yet.',
+                methods: {
+                    card: 'Credit / Debit Card',
+                    paypay: 'PayPay (QR / App Payment)',
+                    convenience: 'Convenience Store (コンビニ決済)',
+                    wallet: 'My Wallet (残高払い)'
+                }
             },
             ja: {
-                htmlLang: 'ja',
-                code: 'JA',
-                overlayTitle: '言語を選択',
-                overlaySub: 'ショップで使用する言語を選んでください',
-                topUpSuffix: 'チャージ',
-                playerInfoTitle: 'プレイヤー情報を入力してください',
-                packageStepTitle: 'パッケージを選択してください',
-                packageNotice: '購入前にプレイヤーID・サーバーIDと残高をご確認ください。',
-                paymentStepTitle: '支払い方法を選択してください',
-                playerIdPlaceholder: 'プレイヤーID',
-                serverIdPlaceholder: 'サーバーID',
-                fullwidthError: '半角数字（0〜9）のみ入力できます。英字・記号・全角文字は入力できません。',
-                walletName: 'マイウォレット',
-                paypayName: 'PayPay',
-                instantSub: '即時',
-                paypayBoxTitle: 'PayPay 決済（デモ）',
-                paypayBoxDesc: '「今すぐ購入」を押すと確認画面が開き、PayPay決済の擬似完了テストができます。',
-                modalTitle: 'お支払い内容の確認',
-                modalPaypayTitle: 'PayPay 決済フロー（デモ）',
-                modalPaypayDesc: '実際のPayPay決済を本番稼働させる場合は、加盟店契約とバックエンドAPI連携が必要です。',
-                modalCancel: 'キャンセル',
-                modalConfirm: '支払いを確定する',
-                infoTitle: '商品情報・注意事項',
-                infoItems: [
-                    '注文確定前にプレイヤーIDとサーバーIDに誤りがないかご確認ください。',
-                    'Wallet の残高はブラウザに保存されます。'
-                ],
-                totalLabel: '合計',
-                buyNow: '今すぐ購入',
-                insufficientWallet: (balance, price) =>
-                    `Wallet残高が不足しています（現在残高: ¥${balance.toLocaleString()} / 必要額: ¥${price.toLocaleString()}）。`,
-                modalSummary: (gameName, itemLabel, playerId, serverId, paymentMethod, price) =>
-                    `${gameName} (${itemLabel}) / ID: ${playerId} (${serverId}) / 支払い方法: ${paymentMethod} / 合計: ¥${price.toLocaleString()}`,
-                orderSuccess: (gameName, itemLabel, playerId, serverId, paymentMethod, price, orderId) =>
-                    `注文を受け付けました [${orderId}]: ${gameName} (${itemLabel}) / ID: ${playerId} (${serverId}) / 支払い方法: ${paymentMethod} / 合計: ¥${price.toLocaleString()}`
+                backShop: '← ショップへ',
+                walletPrefix: '残高:',
+                instantBadge: '即時チャージ',
+                heroSubtitle: 'アカウントIDを入力し、パックと決済方法を選択してください。',
+                step1Title: 'アカウントID確認',
+                userIdLabel: 'ユーザーID (User ID) *',
+                serverIdLabel: 'サーバー / ゾーンID *',
+                checkAccountBtn: 'アカウント確認',
+                notVerified: '未確認',
+                checkingAccount: 'アカウントを確認中...',
+                enterBothIds: 'User ID と Server / Zone ID の両方を入力してください。',
+                idChanged: 'IDが変更されました。もう一度アカウント確認を押してください。',
+                serverChanged: 'サーバーIDが変更されました。もう一度アカウント確認を押してください。',
+                userFound: (name, uid, sid) => `✓ 確認済み: ${name} (${uid} / ${sid})`,
+                step2Title: 'パック選択',
+                passGroupLabel: 'パス・バンドル',
+                diamondGroupLabel: 'ダイヤ・初回2倍ダイヤ',
+                step3Title: '決済方法の選択',
+                payCardTitle: 'クレジットカード / デビットカード',
+                payCardSub: 'Visa, Mastercard, JCB, Amex（即時反映）',
+                payPaypayTitle: 'PayPay（QR / アプリ決済）',
+                payPaypaySub: 'PayPay残高・連携カードで支払い（即時反映）',
+                payCvsTitle: 'コンビニ決済',
+                payCvsSub: 'セブンイレブン・ローソン・ファミマ（入金後に反映）',
+                payWalletTitle: 'マイウォレット（残高払い）',
+                walletOptionPrefix: '残高:',
+                cardNoteLabel: 'カードメモ（本番では決済SDKのトークンを使用）',
+                paypayNoteText: '「決済へ進む」を押すと PayPay 認証フローへ進みます。',
+                cvsEmailLabel: '払込票・案内メール送信先 *',
+                walletNoteText: 'ウォレットの JPY 残高から直接引き落とされます。',
+                summaryPackLabel: '選択中のパック',
+                summaryMethodLabel: '決済方法',
+                summaryTotalLabel: '合計金額',
+                proceedBtn: '決済へ進む',
+                recentOrdersHeading: '最近の注文履歴',
+                noOrdersText: '注文履歴はまだありません。',
+                methods: {
+                    card: 'クレジットカード / デビットカード',
+                    paypay: 'PayPay（QR / アプリ決済）',
+                    convenience: 'コンビニ決済',
+                    wallet: 'マイウォレット（残高払い）'
+                }
             },
             my: {
-                htmlLang: 'my',
-                code: 'MY',
-                overlayTitle: 'ဘာသာစကား ရွေးချယ်ပါ',
-                overlaySub: 'အသုံးပြုလိုသော ဘာသာစကားကို ရွေးချယ်ပါ',
-                topUpSuffix: 'ငွေဖြည့်ရန်',
-                playerInfoTitle: 'အကောင့်နှင့် ကစားသမား အချက်အလက် ထည့်သွင်းပါ',
-                packageStepTitle: 'ပက်ကေ့ချ် ရွေးချယ်ပါ',
-                packageNotice: 'မှာယူမှု မပြုလုပ်မီ ကစားသမား ID၊ ဆာဗာ ID နှင့် လက်ကျန်ငွေကို စစ်ဆေးပါ။',
-                paymentStepTitle: 'ငွေပေးချေမှု နည်းလမ်း ရွေးချယ်ပါ',
-                playerIdPlaceholder: 'ကစားသမား ID',
-                serverIdPlaceholder: 'ဆာဗာ ID',
-                fullwidthError: 'Half-width ဂဏန်း (0-9) သာ ထည့်သွင်းနိုင်ပါသည်။ စာလုံး၊ သင်္ကေတနှင့် Full-width စာလုံးများ မရပါ။',
-                walletName: 'ကျွန်ုပ်၏ Wallet',
-                paypayName: 'PayPay',
-                instantSub: 'ချက်ချင်း',
-                paypayBoxTitle: 'PayPay ငွေပေးချေမှု (Demo)',
-                paypayBoxDesc: 'မှာယူမှု အချက်အလက်ကို စစ်ဆေးပြီး PayPay ငွေပေးချေမှု စမ်းသပ်မှုကို ပြီးမြောက်စေရန် နှိပ်ပါ။',
-                modalTitle: 'ငွေပေးချေမှု အတည်ပြုရန်',
-                modalPaypayTitle: 'PayPay ငွေပေးချေမှု လုပ်ငန်းစဉ် (Demo)',
-                modalPaypayDesc: 'တကယ့် PayPay ငွေပေးချေမှုအတွက် Backend API နှင့် Merchant ချိတ်ဆက်မှု လိုအပ်ပါသည်။',
-                modalCancel: 'မလုပ်တော့ပါ',
-                modalConfirm: 'အတည်ပြုပြီး ပေးချေမည်',
-                infoTitle: 'ထုတ်ကုန် အချက်အလက်',
-                infoItems: [
-                    'မှာယူမှု မပြုလုပ်မီ ကစားသမား ID နှင့် ဆာဗာ ID မှန်ကန်မှုကို စစ်ဆေးပါ။',
-                    'Wallet လက်ကျန်များကို ဘရောက်ဇာတွင် သိမ်းဆည်းထားပါသည်။'
-                ],
-                totalLabel: 'စုစုပေါင်း',
-                buyNow: 'ယခု ဝယ်ယူမည်',
-                insufficientWallet: (balance, price) =>
-                    `Wallet လက်ကျန်ငွေ မလုံလောက်ပါ (လက်ရှိ: ¥${balance.toLocaleString()} / လိုအပ်ငွေ: ¥${price.toLocaleString()})။`,
-                modalSummary: (gameName, itemLabel, playerId, serverId, paymentMethod, price) =>
-                    `${gameName} (${itemLabel}) / ID: ${playerId} (${serverId}) / ငွေပေးချေမှု: ${paymentMethod} / စုစုပေါင်း: ¥${price.toLocaleString()}`,
-                orderSuccess: (gameName, itemLabel, playerId, serverId, paymentMethod, price, orderId) =>
-                    `မှာယူမှု အောင်မြင်ပါသည် [${orderId}]: ${gameName} (${itemLabel}) / ID: ${playerId} (${serverId}) / ငွေပေးချေမှု: ${paymentMethod} / စုစုပေါင်း: ¥${price.toLocaleString()}`
+                backShop: '← ဆိုင်သို့',
+                walletPrefix: 'လက်ကျန်:',
+                instantBadge: 'ချက်ချင်း ဖြည့်သွင်းမည်',
+                heroSubtitle: 'အကောင့် ID ထည့်သွင်းပြီး ပက်ကေ့ချ်နှင့် ငွေပေးချေမှုနည်းလမ်းကို ရွေးချယ်ပါ။',
+                step1Title: 'အကောင့် ID စစ်ဆေးရန်',
+                userIdLabel: 'User ID *',
+                serverIdLabel: 'Server / Zone ID *',
+                checkAccountBtn: 'အကောင့် စစ်ဆေးမည်',
+                notVerified: 'မစစ်ဆေးရသေးပါ',
+                checkingAccount: 'အကောင့်ကို စစ်ဆေးနေပါသည်...',
+                enterBothIds: 'User ID နှင့် Server / Zone ID နှစ်ခုလုံးကို ထည့်သွင်းပါ။',
+                idChanged: 'ID ပြောင်းလဲသွားပါသည်။ အကောင့်ကို ထပ်မံစစ်ဆေးပါ။',
+                serverChanged: 'Server ID ပြောင်းလဲသွားပါသည်။ အကောင့်ကို ထပ်မံစစ်ဆေးပါ။',
+                userFound: (name, uid, sid) => `✓ အကောင့်တွေ့ရှိသည်: ${name} (${uid} / ${sid})`,
+                step2Title: 'ပက်ကေ့ချ် ရွေးချယ်ရန်',
+                passGroupLabel: 'Pass Bundles များ',
+                diamondGroupLabel: 'Diamonds နှင့် Double Diamonds',
+                step3Title: 'ငွေပေးချေမှုနည်းလမ်း ရွေးချယ်ရန်',
+                payCardTitle: 'Credit / Debit Card',
+                payCardSub: 'Visa, Mastercard, JCB, Amex (ချက်ချင်း)',
+                payPaypayTitle: 'PayPay (QR / App Payment)',
+                payPaypaySub: 'PayPay ဖြင့် ပေးချေရန် (ချက်ချင်း)',
+                payCvsTitle: 'Convenience Store (ကွန်ဗင်းနီယံစတိုး)',
+                payCvsSub: '7-Eleven, Lawson, FamilyMart (ငွေသွင်းပြီးမှ ဝင်မည်)',
+                payWalletTitle: 'My Wallet (ပိုက်ဆံအိတ်လက်ကျန်)',
+                walletOptionPrefix: 'လက်ကျန်:',
+                cardNoteLabel: 'ကတ်မှတ်စု (Production တွင် Payment SDK အသုံးပြုရန်)',
+                paypayNoteText: 'ဆက်လုပ်ရန် နှိပ်ပြီးနောက် PayPay အတည်ပြုချက်သို့ သွားပါမည်။',
+                cvsEmailLabel: 'ငွေသွင်းကုဒ် ပို့ရန် အီးမေးလ် *',
+                walletNoteText: 'My Wallet ရှိ JPY လက်ကျန်မှ တိုက်ရိုက်နုတ်ယူပါမည်။',
+                summaryPackLabel: 'ရွေးချယ်ထားသော ပက်ကေ့ချ်',
+                summaryMethodLabel: 'ငွေပေးချေမှုနည်းလမ်း',
+                summaryTotalLabel: 'စုစုပေါင်း ပမာဏ',
+                proceedBtn: 'ငွေပေးချေမှု ဆက်လုပ်မည်',
+                recentOrdersHeading: 'မကြာသေးမီ မှာယူမှုများ',
+                noOrdersText: 'မှာယူမှု မှတ်တမ်း မရှိသေးပါ။',
+                methods: {
+                    card: 'Credit / Debit Card',
+                    paypay: 'PayPay (QR / App Payment)',
+                    convenience: 'Convenience Store (ကွန်ဗင်းနီယံစတိုး)',
+                    wallet: 'My Wallet (ပိုက်ဆံအိတ်လက်ကျန်)'
+                }
             }
         };
 
-        function hasInvalidIdChar(value) {
-            return !/^[0-9]*$/.test(value);
-        }
+        const PACKAGES = [
+            { id: 'weekly-elite', group: 'pass', tag: 'BUNDLE', name: 'Weekly Elite Bundle', jpy: 240 },
+            { id: 'weekly-pass', group: 'pass', tag: 'WEEKLY', name: 'Weekly Pass', jpy: 480 },
+            { id: 'monthly-epic', group: 'pass', tag: 'BUNDLE', name: 'Monthly Epic Bundle', jpy: 1200 },
+            { id: 'twilight-pass', group: 'pass', tag: 'TWILIGHT', name: 'Twilight Pass', jpy: 2500 },
+            { id: 'dia-86', group: 'diamond', tag: 'DIAMOND', name: '86 Diamonds', jpy: 380 },
+            { id: 'dia-172', group: 'diamond', tag: 'DIAMOND', name: '172 Diamonds', jpy: 760 },
+            { id: 'dia-275', group: 'diamond', tag: 'FEATURED', name: '275 Diamonds', jpy: 1200 },
+            { id: 'dia-600', group: 'diamond', tag: 'FEATURED', name: '600 Diamonds', jpy: 2600 },
+            { id: 'double-50', group: 'diamond', tag: '2X FIRST', name: '50 + 50 Diamonds', jpy: 240 },
+            { id: 'double-150', group: 'diamond', tag: '2X FIRST', name: '150 + 150 Diamonds', jpy: 720 }
+        ];
 
         function normalizeLang(lang) {
             return SUPPORTED_LANGS.includes(lang) ? lang : 'en';
@@ -651,343 +509,381 @@
 
         function getSavedLang() {
             try {
-                const lang = localStorage.getItem(STORAGE_KEYS.LANG);
-                return SUPPORTED_LANGS.includes(lang) ? lang : null;
+                return normalizeLang(localStorage.getItem(STORAGE_KEYS.LANG) || 'en');
             } catch {
-                return null;
+                return 'en';
             }
         }
 
         function setSavedLang(lang) {
+            const safeLang = normalizeLang(lang);
             try {
-                localStorage.setItem(STORAGE_KEYS.LANG, normalizeLang(lang));
+                localStorage.setItem(STORAGE_KEYS.LANG, safeLang);
             } catch {}
+            return safeLang;
         }
 
-        function getAccount() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEYS.ACCOUNT);
-                return raw ? JSON.parse(raw) : null;
-            } catch {
-                return null;
-            }
+        const params = new URLSearchParams(window.location.search);
+        const gameSlug = params.get('game') || 'mlbb';
+        const gameTitle = params.get('title') || 'Mobile Legends';
+        document.getElementById('gameTitle').textContent = gameTitle;
+        document.title = `${gameTitle} | My Game Shop`;
+
+        let state = {
+            lang: getSavedLang(),
+            currency: 'JPY',
+            selectedPackId: PACKAGES[0].id,
+            paymentMethod: 'card',
+            verifiedAccount: null
+        };
+
+        function t() {
+            return I18N[state.lang] || I18N.en;
         }
 
         function getBalance() {
             try {
-                const saved = parseInt(localStorage.getItem(STORAGE_KEYS.BALANCE) || '0', 10);
-                return Number.isNaN(saved) || saved < 0 ? 0 : saved;
+                const val = parseInt(localStorage.getItem(STORAGE_KEYS.BALANCE) || '0', 10);
+                return Number.isNaN(val) || val < 0 ? 0 : val;
             } catch {
                 return 0;
             }
         }
 
-        function setBalance(amount) {
-            const safeAmount = Math.max(0, Math.floor(amount));
+        function setBalance(nextBal) {
+            const safe = Math.max(0, Math.floor(nextBal));
             try {
-                localStorage.setItem(STORAGE_KEYS.BALANCE, String(safeAmount));
+                localStorage.setItem(STORAGE_KEYS.BALANCE, String(safe));
+            } catch {}
+            renderHeader();
+        }
+
+        function formatPrice(jpyAmount, currency) {
+            const safeCurrency = currency === 'MMK' ? 'MMK' : 'JPY';
+            const rate = RATES_FROM_JPY[safeCurrency] || 1;
+            const converted = Math.max(1, Math.round(jpyAmount * rate));
+            if (safeCurrency === 'JPY') return `¥${converted.toLocaleString()}`;
+            return `${converted.toLocaleString()} MMK`;
+        }
+
+        function renderHeader() {
+            const bal = getBalance().toLocaleString();
+            document.getElementById('navBalance').textContent = bal;
+            document.getElementById('walletOptionBalance').textContent = bal;
+            try {
+                const acc = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACCOUNT) || 'null');
+                if (acc && acc.username) {
+                    document.getElementById('navAccount').textContent = `@${acc.username}`;
+                }
             } catch {}
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        function renderPackages() {
+            const passGrid = document.getElementById('passGrid');
+            const diamondGrid = document.getElementById('diamondGrid');
+            passGrid.innerHTML = '';
+            diamondGrid.innerHTML = '';
+
+            PACKAGES.forEach(pack => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `pack-btn ${pack.id === state.selectedPackId ? 'active' : ''}`;
+                btn.innerHTML = `
+                    <span class="pack-tag">${pack.tag}</span>
+                    <div class="fw-bold small">${pack.name}</div>
+                    <div class="text-success fw-bold mt-1">${formatPrice(pack.jpy, state.currency)}</div>
+                `;
+                btn.addEventListener('click', () => {
+                    state.selectedPackId = pack.id;
+                    renderPackages();
+                    renderSummary();
+                });
+
+                if (pack.group === 'pass') {
+                    passGrid.appendChild(btn);
+                } else {
+                    diamondGrid.appendChild(btn);
+                }
+            });
+        }
+
+        function renderPaymentFields() {
+            document.getElementById('cardFields').classList.toggle('d-none', state.paymentMethod !== 'card');
+            document.getElementById('paypayFields').classList.toggle('d-none', state.paymentMethod !== 'paypay');
+            document.getElementById('convenienceFields').classList.toggle('d-none', state.paymentMethod !== 'convenience');
+            document.getElementById('walletFields').classList.toggle('d-none', state.paymentMethod !== 'wallet');
+        }
+
+        function renderSummary() {
+            const pack = PACKAGES.find(p => p.id === state.selectedPackId) || PACKAGES[0];
+            const dict = t();
+            document.getElementById('summaryPack').textContent = pack.name;
+            document.getElementById('summaryMethod').textContent = dict.methods[state.paymentMethod] || state.paymentMethod;
+            document.getElementById('summaryPrice').textContent = formatPrice(pack.jpy, state.currency);
+        }
+
+        function renderOrders() {
+            const ordersList = document.getElementById('ordersList');
+            const dict = t();
             try {
-                const account = getAccount();
-                const accountBadge = document.getElementById('accountBadge');
-                if (account && account.username && accountBadge) {
-                    accountBadge.textContent = `@${account.username}`;
+                const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]');
+                if (!orders.length) {
+                    ordersList.innerHTML = `<small class="text-muted-custom">${dict.noOrdersText}</small>`;
+                    return;
                 }
+                ordersList.innerHTML = orders.slice(0, 5).map(o => `
+                    <div class="order-item">
+                        <div class="fw-bold">${o.orderId} · ${o.packageName} (${formatPrice(o.jpyAmount, o.currency || 'JPY')})</div>
+                        <div class="text-muted-custom">ID: ${o.userId} (${o.serverId}) · ${dict.methods[o.paymentMethod] || o.paymentMethod} · ${o.status}</div>
+                    </div>
+                `).join('');
+            } catch {
+                ordersList.innerHTML = `<small class="text-muted-custom">${dict.noOrdersText}</small>`;
+            }
+        }
 
-                const urlParams = new URLSearchParams(window.location.search);
-                const gameId = urlParams.get('game') || '';
-                const queryTitle = (urlParams.get('title') || '').trim();
-                const configById = GAME_CURRENCY_CONFIG[gameId];
-                const resolvedName = queryTitle || (configById ? configById.name : 'Game');
-                const resolvedCurrency = configById
-                    ? configById.currency
-                    : resolveCurrencyByTitle(resolvedName, 'Credits');
+        function applyLanguage(lang) {
+            state.lang = setSavedLang(lang);
+            const dict = t();
+            document.documentElement.lang = state.lang;
+            document.getElementById('langSelect').value = state.lang;
 
-                const selectedGame = {
-                    name: resolvedName,
-                    currency: resolvedCurrency
+            document.getElementById('backShopLink').textContent = dict.backShop;
+            document.getElementById('navWalletPrefix').textContent = dict.walletPrefix;
+            document.getElementById('instantBadge').textContent = dict.instantBadge;
+            document.getElementById('heroSubtitle').textContent = dict.heroSubtitle;
+            document.getElementById('step1Title').textContent = dict.step1Title;
+            document.getElementById('userIdLabel').textContent = dict.userIdLabel;
+            document.getElementById('serverIdLabel').textContent = dict.serverIdLabel;
+            document.getElementById('checkAccountBtn').textContent = dict.checkAccountBtn;
+
+            const statusEl = document.getElementById('accountVerifyStatus');
+            if (state.verifiedAccount) {
+                statusEl.textContent = dict.userFound(
+                    state.verifiedAccount.username,
+                    state.verifiedAccount.userId,
+                    state.verifiedAccount.serverId
+                );
+            } else if (!statusEl.dataset.customMessage) {
+                statusEl.textContent = dict.notVerified;
+            }
+
+            document.getElementById('step2Title').textContent = dict.step2Title;
+            document.getElementById('passGroupLabel').textContent = dict.passGroupLabel;
+            document.getElementById('diamondGroupLabel').textContent = dict.diamondGroupLabel;
+            document.getElementById('step3Title').textContent = dict.step3Title;
+
+            document.getElementById('payCardTitle').textContent = dict.payCardTitle;
+            document.getElementById('payCardSub').textContent = dict.payCardSub;
+            document.getElementById('payPaypayTitle').textContent = dict.payPaypayTitle;
+            document.getElementById('payPaypaySub').textContent = dict.payPaypaySub;
+            document.getElementById('payCvsTitle').textContent = dict.payCvsTitle;
+            document.getElementById('payCvsSub').textContent = dict.payCvsSub;
+            document.getElementById('payWalletTitle').textContent = dict.payWalletTitle;
+            document.getElementById('walletOptionPrefix').textContent = dict.walletOptionPrefix;
+
+            document.getElementById('cardNoteLabel').textContent = dict.cardNoteLabel;
+            document.getElementById('paypayNoteText').textContent = dict.paypayNoteText;
+            document.getElementById('cvsEmailLabel').textContent = dict.cvsEmailLabel;
+            document.getElementById('walletNoteText').textContent = dict.walletNoteText;
+
+            document.getElementById('summaryPackLabel').textContent = dict.summaryPackLabel;
+            document.getElementById('summaryMethodLabel').textContent = dict.summaryMethodLabel;
+            document.getElementById('summaryTotalLabel').textContent = dict.summaryTotalLabel;
+            document.getElementById('proceedBtn').textContent = dict.proceedBtn;
+            document.getElementById('recentOrdersHeading').textContent = dict.recentOrdersHeading;
+
+            renderSummary();
+            renderOrders();
+        }
+
+        function resetAccountVerification(message = null) {
+            state.verifiedAccount = null;
+            const statusEl = document.getElementById('accountVerifyStatus');
+            statusEl.className = 'small text-muted-custom';
+            if (message) {
+                statusEl.dataset.customMessage = '1';
+                statusEl.textContent = message;
+            } else {
+                delete statusEl.dataset.customMessage;
+                statusEl.textContent = t().notVerified;
+            }
+        }
+
+        async function fetchRealMlbbAccount(userId, serverId) {
+            const response = await fetch(API_ENDPOINTS.CHECK_ACCOUNT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    game: 'mlbb',
+                    userid: userId,
+                    zoneid: serverId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (!data.ok || !data.username) {
+                throw new Error(data.message || 'Account not found');
+            }
+
+            return data.username;
+        }
+
+        document.getElementById('langSelect').addEventListener('change', (e) => {
+            applyLanguage(e.target.value);
+        });
+
+        document.querySelectorAll('.currency-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const chosen = btn.getAttribute('data-currency');
+                state.currency = chosen === 'MMK' ? 'MMK' : 'JPY';
+                document.querySelectorAll('.currency-btn').forEach(b => {
+                    const active = b === btn;
+                    b.classList.toggle('active', active);
+                    b.classList.toggle('btn-success', active);
+                    b.classList.toggle('text-dark', active);
+                    b.classList.toggle('fw-bold', active);
+                    b.classList.toggle('btn-outline-light', !active);
+                });
+                renderPackages();
+                renderSummary();
+            });
+        });
+
+        document.getElementById('userIdInput').addEventListener('input', () => {
+            resetAccountVerification(t().idChanged);
+        });
+        document.getElementById('serverIdInput').addEventListener('input', () => {
+            resetAccountVerification(t().serverChanged);
+        });
+
+        document.getElementById('checkAccountBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('checkAccountBtn');
+            const userId = document.getElementById('userIdInput').value.trim();
+            const serverId = document.getElementById('serverIdInput').value.trim();
+            const statusEl = document.getElementById('accountVerifyStatus');
+            const dict = t();
+
+            if (!userId || !serverId) {
+                state.verifiedAccount = null;
+                statusEl.dataset.customMessage = '1';
+                statusEl.className = 'small text-warning';
+                statusEl.textContent = dict.enterBothIds;
+                return;
+            }
+
+            btn.disabled = true;
+            statusEl.dataset.customMessage = '1';
+            statusEl.className = 'small text-info';
+            statusEl.textContent = dict.checkingAccount;
+
+            try {
+                const username = await fetchRealMlbbAccount(userId, serverId);
+                delete statusEl.dataset.customMessage;
+                state.verifiedAccount = {
+                    userId,
+                    serverId,
+                    username
                 };
-
-                const packages = document.querySelectorAll('.package-card');
-                packages.forEach(pkg => {
-                    const amount = parseInt(pkg.getAttribute('data-base-amount') || '0', 10);
-                    const amountEl = pkg.querySelector('.package-amount');
-                    if (amountEl && amount) {
-                        amountEl.textContent = `${amount.toLocaleString()} ${selectedGame.currency}`;
-                    }
-                });
-
-                const paymentCards = document.querySelectorAll('.payment-card');
-                const paypayInfoBox = document.getElementById('paypayInfoBox');
-                const playerIdInput = document.getElementById('playerIdInput');
-                const serverIdInput = document.getElementById('serverIdInput');
-                const fullwidthError = document.getElementById('fullwidthError');
-                const displayTotal = document.getElementById('displayTotal');
-                const buyButton = document.getElementById('buyButton');
-                const statusMessage = document.getElementById('statusMessage');
-                const langOverlay = document.getElementById('langOverlay');
-                const openLangOverlayBtn = document.getElementById('openLangOverlayBtn');
-                const langChoiceButtons = document.querySelectorAll('.lang-choice-btn');
-
-                const checkoutModalEl = document.getElementById('checkoutModal');
-                const checkoutModal = (window.bootstrap && checkoutModalEl)
-                    ? new window.bootstrap.Modal(checkoutModalEl)
-                    : null;
-                const modalSummaryText = document.getElementById('modalSummaryText');
-                const modalPaypayNotice = document.getElementById('modalPaypayNotice');
-                const modalConfirmBtn = document.getElementById('modalConfirmBtn');
-
-                let selectedPackage = null;
-                let selectedPayment = 'wallet';
-                let activeLang = normalizeLang(getSavedLang() || 'en');
-
-                function updatePaypayBoxVisibility() {
-                    if (paypayInfoBox) {
-                        paypayInfoBox.classList.toggle('d-none', selectedPayment !== 'paypay');
-                    }
-                }
-
-                function validateIdInputs() {
-                    const t = I18N[activeLang];
-                    const playerInvalid = hasInvalidIdChar(playerIdInput.value);
-                    const serverInvalid = hasInvalidIdChar(serverIdInput.value);
-
-                    playerIdInput.classList.toggle('is-fullwidth-error', playerInvalid);
-                    serverIdInput.classList.toggle('is-fullwidth-error', serverInvalid);
-
-                    if (playerInvalid || serverInvalid) {
-                        fullwidthError.textContent = t.fullwidthError;
-                        fullwidthError.classList.remove('d-none');
-                        return false;
-                    } else {
-                        fullwidthError.classList.add('d-none');
-                        fullwidthError.textContent = '';
-                        return true;
-                    }
-                }
-
-                function updateBuyButtonState() {
-                    const isValidId = validateIdInputs();
-                    const hasPlayerId = playerIdInput.value.trim().length > 0;
-                    const hasServerId = serverIdInput.value.trim().length > 0;
-                    buyButton.disabled = !(selectedPackage && hasPlayerId && hasServerId && isValidId);
-                }
-
-                function getSelectedPaymentLabel() {
-                    const activeCard = document.querySelector('.payment-card.selected');
-                    if (!activeCard) return 'My Wallet';
-                    const nameEl = activeCard.querySelector('.payment-name');
-                    return nameEl ? nameEl.textContent.trim() : selectedPayment;
-                }
-
-                function renderTotalDisplay() {
-                    if (!selectedPackage) {
-                        displayTotal.textContent = '¥ 0';
-                        return;
-                    }
-                    displayTotal.textContent = '¥ ' + selectedPackage.price.toLocaleString();
-                }
-
-                function updateActiveChoiceButton(lang) {
-                    langChoiceButtons.forEach(btn => {
-                        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-                    });
-                }
-
-                function applyLanguage(lang) {
-                    activeLang = normalizeLang(lang);
-                    const t = I18N[activeLang];
-                    const balance = getBalance();
-
-                    document.documentElement.lang = t.htmlLang;
-                    document.getElementById('currentLangCode').textContent = t.code;
-                    document.getElementById('langOverlayTitle').textContent = t.overlayTitle;
-                    document.getElementById('langOverlaySub').textContent = t.overlaySub;
-
-                    document.getElementById('headerTitle').textContent = `${selectedGame.name} ${t.topUpSuffix}`;
-                    document.getElementById('pageTitle').textContent = `${selectedGame.name} - My Game Shop`;
-
-                    document.getElementById('playerInfoTitle').textContent = t.playerInfoTitle;
-                    document.getElementById('packageStepTitle').textContent = t.packageStepTitle;
-                    document.getElementById('packageNotice').textContent = t.packageNotice;
-                    document.getElementById('paymentStepTitle').textContent = t.paymentStepTitle;
-
-                    playerIdInput.placeholder = t.playerIdPlaceholder;
-                    serverIdInput.placeholder = t.serverIdPlaceholder;
-
-                    document.getElementById('payWalletName').textContent = t.walletName;
-                    document.getElementById('payWalletSub').textContent = `¥ ${balance.toLocaleString()}`;
-                    document.getElementById('payPaypayName').textContent = t.paypayName;
-                    document.getElementById('payInstantSub').textContent = t.instantSub;
-
-                    document.getElementById('paypayBoxTitle').textContent = t.paypayBoxTitle;
-                    document.getElementById('paypayBoxDesc').textContent = t.paypayBoxDesc;
-
-                    document.getElementById('checkoutModalLabel').textContent = t.modalTitle;
-                    document.getElementById('modalPaypayTitle').textContent = t.modalPaypayTitle;
-                    document.getElementById('modalPaypayDesc').textContent = t.modalPaypayDesc;
-                    document.getElementById('modalCancelBtn').textContent = t.modalCancel;
-                    document.getElementById('modalConfirmBtn').textContent = t.modalConfirm;
-
-                    document.getElementById('productInfoTitle').textContent = t.infoTitle;
-                    const infoList = document.getElementById('productInfoList');
-                    infoList.innerHTML = t.infoItems.map(item => `<li>${item}</li>`).join('');
-
-                    document.getElementById('totalLabel').textContent = t.totalLabel;
-                    buyButton.textContent = t.buyNow;
-
-                    renderTotalDisplay();
-                    updatePaypayBoxVisibility();
-                    updateActiveChoiceButton(activeLang);
-                    updateBuyButtonState();
-                }
-
-                function openOverlay() {
-                    updateActiveChoiceButton(activeLang);
-                    langOverlay.classList.remove('d-none');
-                }
-
-                function closeOverlay() {
-                    langOverlay.classList.add('d-none');
-                }
-
-                if (!getSavedLang()) {
-                    openOverlay();
-                }
-                applyLanguage(activeLang);
-
-                openLangOverlayBtn.addEventListener('click', openOverlay);
-
-                langChoiceButtons.forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const chosenLang = normalizeLang(this.getAttribute('data-lang'));
-                        setSavedLang(chosenLang);
-                        applyLanguage(chosenLang);
-                        closeOverlay();
-                    });
-                });
-
-                packages.forEach(pkg => {
-                    pkg.addEventListener('click', function () {
-                        packages.forEach(p => p.classList.remove('selected'));
-                        this.classList.add('selected');
-
-                        const price = parseInt(this.getAttribute('data-price'), 10);
-                        const amount = parseInt(this.getAttribute('data-base-amount') || '0', 10);
-
-                        selectedPackage = {
-                            price: price,
-                            label: `${amount.toLocaleString()} ${selectedGame.currency}`
-                        };
-
-                        renderTotalDisplay();
-                        statusMessage.classList.add('d-none');
-                        updateBuyButtonState();
-                    });
-                });
-
-                paymentCards.forEach(card => {
-                    card.addEventListener('click', function () {
-                        paymentCards.forEach(c => c.classList.remove('selected'));
-                        this.classList.add('selected');
-                        selectedPayment = this.getAttribute('data-method') || 'wallet';
-                        updatePaypayBoxVisibility();
-                        renderTotalDisplay();
-                        statusMessage.classList.add('d-none');
-                    });
-                });
-
-                playerIdInput.addEventListener('input', function () {
-                    statusMessage.classList.add('d-none');
-                    updateBuyButtonState();
-                });
-
-                serverIdInput.addEventListener('input', function () {
-                    statusMessage.classList.add('d-none');
-                    updateBuyButtonState();
-                });
-
-                function completeOrder() {
-                    if (!selectedPackage || !validateIdInputs()) return;
-
-                    const t = I18N[activeLang];
-                    const playerId = playerIdInput.value.trim();
-                    const serverId = serverIdInput.value.trim();
-                    const paymentMethod = getSelectedPaymentLabel();
-
-                    if (selectedPayment === 'wallet') {
-                        const currentBalance = getBalance();
-                        if (currentBalance < selectedPackage.price) {
-                            if (checkoutModal) checkoutModal.hide();
-                            statusMessage.className = 'alert alert-danger';
-                            statusMessage.textContent = t.insufficientWallet(currentBalance, selectedPackage.price);
-                            statusMessage.classList.remove('d-none');
-                            return;
-                        }
-                        setBalance(currentBalance - selectedPackage.price);
-                        applyLanguage(activeLang);
-                    }
-
-                    const prefix = selectedPayment === 'paypay' ? 'PP' : 'ORD';
-                    const orderId = `${prefix}-${Date.now()}`;
-
-                    if (checkoutModal) checkoutModal.hide();
-                    statusMessage.className = 'alert alert-success';
-                    statusMessage.textContent = t.orderSuccess(
-                        selectedGame.name,
-                        selectedPackage.label,
-                        playerId,
-                        serverId,
-                        paymentMethod,
-                        selectedPackage.price,
-                        orderId
-                    );
-                    statusMessage.classList.remove('d-none');
-                }
-
-                buyButton.addEventListener('click', function () {
-                    if (!validateIdInputs() || buyButton.disabled || !selectedPackage) return;
-
-                    const t = I18N[activeLang];
-                    const playerId = playerIdInput.value.trim();
-                    const serverId = serverIdInput.value.trim();
-                    const paymentMethod = getSelectedPaymentLabel();
-
-                    if (selectedPayment === 'wallet') {
-                        const currentBalance = getBalance();
-                        if (currentBalance < selectedPackage.price) {
-                            statusMessage.className = 'alert alert-danger';
-                            statusMessage.textContent = t.insufficientWallet(currentBalance, selectedPackage.price);
-                            statusMessage.classList.remove('d-none');
-                            return;
-                        }
-                    }
-
-                    if (!checkoutModal) {
-                        completeOrder();
-                        return;
-                    }
-
-                    modalSummaryText.textContent = t.modalSummary(
-                        selectedGame.name,
-                        selectedPackage.label,
-                        playerId,
-                        serverId,
-                        paymentMethod,
-                        selectedPackage.price
-                    );
-                    modalPaypayNotice.classList.toggle('d-none', selectedPayment !== 'paypay');
-                    checkoutModal.show();
-                });
-
-                modalConfirmBtn.addEventListener('click', completeOrder);
+                statusEl.className = 'small text-success fw-bold';
+                statusEl.textContent = dict.userFound(username, userId, serverId);
             } catch (err) {
-                console.error('product.html init error:', err);
+                state.verifiedAccount = null;
+                statusEl.dataset.customMessage = '1';
+                statusEl.className = 'small text-danger fw-bold';
+                statusEl.textContent = `Account lookup failed: ${err.message || 'Unknown error'}`;
+            } finally {
+                btn.disabled = false;
             }
         });
+
+        document.querySelectorAll('.payment-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                state.paymentMethod = btn.getAttribute('data-method');
+                document.querySelectorAll('.payment-option').forEach(b => {
+                    b.classList.toggle('active', b === btn);
+                });
+                renderPaymentFields();
+                renderSummary();
+            });
+        });
+
+        document.getElementById('proceedBtn').addEventListener('click', () => {
+            const userId = document.getElementById('userIdInput').value.trim();
+            const serverId = document.getElementById('serverIdInput').value.trim();
+            const pack = PACKAGES.find(p => p.id === state.selectedPackId) || PACKAGES[0];
+            const statusBox = document.getElementById('orderStatusBox');
+            const dict = t();
+
+            if (!userId || !serverId) {
+                statusBox.innerHTML = `<div class="alert alert-warning py-2 mb-0">${dict.enterBothIds}</div>`;
+                return;
+            }
+
+            if (state.paymentMethod === 'convenience') {
+                const email = document.getElementById('customerEmailInput').value.trim();
+                if (!email) {
+                    statusBox.innerHTML = '<div class="alert alert-warning py-2 mb-0">Please enter an email for convenience store payment instructions.</div>';
+                    return;
+                }
+            }
+
+            if (state.paymentMethod === 'wallet') {
+                const currentBal = getBalance();
+                if (currentBal < pack.jpy) {
+                    statusBox.innerHTML = `<div class="alert alert-danger py-2 mb-0">Insufficient wallet balance (Balance: ¥${currentBal.toLocaleString()} / Required: ¥${pack.jpy.toLocaleString()}).</div>`;
+                    return;
+                }
+                setBalance(currentBal - pack.jpy);
+            }
+
+            const orderId = 'ORD-' + Date.now().toString().slice(-6);
+            const statusText = state.paymentMethod === 'convenience'
+                ? 'Pending Payment (コンビニ払込待ち)'
+                : 'Completed (Demo Order Created)';
+
+            const orderRecord = {
+                orderId,
+                game: gameSlug,
+                userId,
+                serverId,
+                verifiedUsername: state.verifiedAccount ? state.verifiedAccount.username : null,
+                packageName: pack.name,
+                jpyAmount: pack.jpy,
+                currency: state.currency,
+                paymentMethod: state.paymentMethod,
+                status: statusText,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                const existing = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]');
+                existing.unshift(orderRecord);
+                localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(existing.slice(0, 50)));
+            } catch {}
+
+            renderOrders();
+
+            statusBox.innerHTML = `
+                <div class="alert alert-success py-2 mb-0">
+                    <div><strong>Order Created:</strong> ${orderId}</div>
+                    <div><strong>Method:</strong> ${dict.methods[state.paymentMethod] || state.paymentMethod}</div>
+                    <div><strong>Target:</strong> ${gameTitle} (${userId} / ${serverId})${state.verifiedAccount ? ` · ${state.verifiedAccount.username}` : ''} &mdash; ${pack.name} (${formatPrice(pack.jpy, state.currency)})</div>
+                    <div class="mt-1">Status: ${statusText}</div>
+                </div>
+            `;
+        });
+
+        renderHeader();
+        renderPackages();
+        renderPaymentFields();
+        applyLanguage(state.lang);
     </script>
 </body>
 </html>
